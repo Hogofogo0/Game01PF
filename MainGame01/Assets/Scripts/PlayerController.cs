@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        var movement = Input.GetAxis("Horizontal");
         if (!EscapeMenu.escapeMenuEnabled)
         {
             if (lastMenu)
@@ -31,9 +32,21 @@ public class PlayerController : MonoBehaviour
             }
             
             
-            var movement = Input.GetAxis("Horizontal");
-            transform.position += new Vector3(movement, 0, 0) * Time.deltaTime * MovementSpeed;
+            
+            //transform.position += new Vector3(movement, 0, 0) * Time.deltaTime * MovementSpeed;
 
+            if(movement < 0)
+            {
+                _rigidbody.AddForce(-Vector2.right * MovementSpeed);
+
+            }
+            else if(movement > 0)
+            {
+                _rigidbody.AddForce(Vector2.right * MovementSpeed);
+
+            }
+            
+            
 
             if (Input.GetButtonDown("Jump") && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
             {
@@ -47,19 +60,19 @@ public class PlayerController : MonoBehaviour
             {
                 anim.SetInteger("AnimState", 1);
                 anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(-1, 1);
+                transform.localScale = new Vector2(-1.2f, 1.2f);
             }
             else if (movement > 0 && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
             {
                 anim.SetInteger("AnimState", 1);
                 anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(1, 1);
+                transform.localScale = new Vector2(1.2f, 1.2f);
             }
             else if (Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
             {
                 anim.SetInteger("AnimState", 0);
                 anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(1, 1);
+                transform.localScale = new Vector2(1.2f, 1.2f);
             }
 
             if (jumping == true && _rigidbody.velocity.y < -0.001f)
@@ -75,6 +88,16 @@ public class PlayerController : MonoBehaviour
             _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
             lastMenu = true;
         }
+        if(movement > 0)
+        {
+
+            transform.localScale = new Vector2(1.2f, 1.2f);
+
+        }else if(movement < 0) {
+
+            transform.localScale = new Vector2(-1.2f, 1.2f);
+        }
+        
         
 
 
