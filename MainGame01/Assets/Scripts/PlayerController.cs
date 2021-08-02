@@ -5,7 +5,8 @@ public class PlayerController : MonoBehaviour
 
     public float MovementSpeed = 10;
     public float JumpForce = 4;
-    public bool jumping;
+    float movement = 0f;
+    int doubleJump = 2;
 
     private bool lastMenu;
 
@@ -20,87 +21,72 @@ public class PlayerController : MonoBehaviour
 
     
 
-    void Update()
+
+    
+
+    private void Update()
     {
-        var movement = Input.GetAxis("Horizontal");
-        if (!EscapeMenu.escapeMenuEnabled)
+        float direction = Input.GetAxisRaw("Horizontal");
+        _rigidbody.velocity = new Vector2((MovementSpeed*100) * direction * Time.fixedDeltaTime, _rigidbody.velocity.y);
+
+        if (Input.GetButtonDown("Jump") && (Mathf.Abs(_rigidbody.velocity.y) < 0.001f||doubleJump > 0) && !Attack.isAttacking)
         {
-            if (lastMenu)
+
+            if(_rigidbody.velocity.y < 0)
             {
-                _rigidbody.constraints = RigidbodyConstraints2D.None;
-                _rigidbody.AddForce(new Vector2(0, 0));
-                lastMenu = false;
+
+                _rigidbody.AddForce(new Vector2(0, JumpForce * 1.75f), ForceMode2D.Impulse);
+
             }
-
-
-
-            transform.position += new Vector3(movement, 0) * Time.deltaTime * MovementSpeed;
-
-            //_rigidbody.MovePosition(new Vector2((transform.position.x + movement) * MovementSpeed * Time.deltaTime ,transform.position.y));
-
-            //_rigidbody.velocity = new Vector2(movement, _rigidbody.velocity.y) * MovementSpeed * Time.deltaTime;
-            
-            
-            
-
-            if (Input.GetButtonDown("Jump") && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)//
+            else
             {
+
                 _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
-                anim.SetTrigger("Jump");
-                jumping = true;
             }
+            
+            anim.SetTrigger("Jump");
+            doubleJump--;
+        }
+        if(_rigidbody.velocity.y < -0.001f)
+        {
+            anim.SetTrigger("fall");
+        }
 
-            else if (movement < 0 && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
-            {
-                anim.SetInteger("AnimState", 1);
-                anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(-1.2f, 1.2f);
-            }
-            else if (movement > 0 && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
-            {
-                anim.SetInteger("AnimState", 1);
-                anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(1.2f, 1.2f);
-            }
-            else if (Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
-            {
-                anim.SetInteger("AnimState", 0);
-                anim.SetBool("Grounded", true);
-                transform.localScale = new Vector2(1.2f, 1.2f);
-            }
-
-            if (_rigidbody.velocity.y < 0)
-            {
-
-                anim.SetTrigger("fall");
-                anim.SetBool("Grounded", false);
-                jumping = false;
-            }
+        if (Mathf.Abs(_rigidbody.velocity.y) > 0)
+        {
+            anim.SetBool("Grounded", false);
         }
         else
         {
-            _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-            lastMenu = true;
+            anim.SetBool("Grounded", true);
+            doubleJump = 2;
         }
-        if(movement > 0)
+
+        if(direction < 0)
         {
-
+            transform.localScale = new Vector2(-1.2f,1.2f);
+        }
+        else
+        {
             transform.localScale = new Vector2(1.2f, 1.2f);
+        }
 
-        }else if(movement < 0) {
-
-            transform.localScale = new Vector2(-1.2f, 1.2f);
+        if (Mathf.Abs(_rigidbody.velocity.x) > 0)
+        {
+            anim.SetInteger("AnimState", 1);
+        }
+        else
+        {
+            anim.SetInteger("AnimState", 0);
         }
 
 
-
-
-       
-
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void FixedUpdate()
     {
-        anim.SetBool("Grounded", true);
+        
     }
+
+    
 }
