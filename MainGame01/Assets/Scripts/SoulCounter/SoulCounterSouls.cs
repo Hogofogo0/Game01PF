@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulCounterPlayer : MonoBehaviour
+public class SoulCounterSouls : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -18,10 +18,10 @@ public class SoulCounterPlayer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.name.Contains("soul"))
+        if(collision.name == "Player")
         {
             SoulCounterText.souls++;
-            collision.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 }
