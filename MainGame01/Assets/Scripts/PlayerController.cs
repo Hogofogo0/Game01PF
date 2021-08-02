@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     public float MovementSpeed = 10;
     public float JumpForce = 4;
     public bool jumping;
+
     private bool lastMenu;
 
     private Animator anim;
@@ -30,28 +31,21 @@ public class PlayerController : MonoBehaviour
                 _rigidbody.AddForce(new Vector2(0, 0));
                 lastMenu = false;
             }
-            
-            
-            
-            //transform.position += new Vector3(movement, 0, 0) * Time.deltaTime * MovementSpeed;
 
-            if(movement < 0)
-            {
-                _rigidbody.AddForce(-Vector2.right * MovementSpeed);
 
-            }
-            else if(movement > 0)
-            {
-                _rigidbody.AddForce(Vector2.right * MovementSpeed);
 
-            }
+            transform.position += new Vector3(movement, 0) * Time.deltaTime * MovementSpeed;
+
+            //_rigidbody.MovePosition(new Vector2((transform.position.x + movement) * MovementSpeed * Time.deltaTime ,transform.position.y));
+
+            //_rigidbody.velocity = new Vector2(movement, _rigidbody.velocity.y) * MovementSpeed * Time.deltaTime;
+            
             
             
 
-            if (Input.GetButtonDown("Jump") && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)
+            if (Input.GetButtonDown("Jump") && Mathf.Abs(_rigidbody.velocity.y) < 0.001f)//
             {
                 _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
-                anim.SetInteger("AirSpeedY", 1);
                 anim.SetTrigger("Jump");
                 jumping = true;
             }
@@ -75,7 +69,7 @@ public class PlayerController : MonoBehaviour
                 transform.localScale = new Vector2(1.2f, 1.2f);
             }
 
-            if (jumping == true && _rigidbody.velocity.y < -0.001f)
+            if (_rigidbody.velocity.y < 0)
             {
 
                 anim.SetTrigger("fall");
@@ -97,11 +91,11 @@ public class PlayerController : MonoBehaviour
 
             transform.localScale = new Vector2(-1.2f, 1.2f);
         }
-        
-        
 
 
 
+
+       
 
     }
 
